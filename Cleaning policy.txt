@@ -1,0 +1,66 @@
+
+
+#!/usr/bin/ksh
+#
+# Abhay		10Apr 2019	HD0000006116778 Creation
+# ------------------------------------------------------------
+# SCHED.JOB NAME :  AP-CLEAN.CLEANLOG
+# STREAM LOGON   :  root
+# CRITICITY      :  3
+# OWNER          :  WWDC API
+#
+# Cleaning for Jboss logs
+#
+# TRAPPING ERROR ------------------------------------------------------------------
+trap 'STATUS=$?;set +x;echo;echo error $STATUS at line nb $LINENO executing :\
+     `sed -n "${LINENO}p" $0`;echo;exit $STATUS' ERR
+
+path=/var/opt/pkgw10/STMjboss/
+df -kh $path
+# MAIN PROGRAM ------------------------------------------------------------------
+for folder in `ls $path`
+do
+	if [ -d "$path\$folder" ]; then
+	cd $path\$folder
+	echo "Removing files older than 90 days"
+        find  $path -type f  -mtime +90  -name "*.log.*" -exec ls -l {} \;
+        find  $path -type f  -mtime +90  -name "*.log.*" -exec rm -f {} \;
+        find  $path -type f -mtime +30 ! -name "*.gz" -exec gzip -f {} \;
+	fi
+done
+df -kh $path
+
+
+
+
+===============================================================
+# Abhay		10Apr 2019	HD0000006116778 Creation
+
+SCHEDULE eulw10#AP-CLEAN
+ON EVERYDAY
+AT 0600
+:
+eulw10#CLEANLOG
+ SCRIPTNAME "/mjobw10/api/ap-clean.cleanlog"
+ STREAMLOGON root
+ DESCRIPTION "To clean logs for /var/opt/pkgw10/STMjboss/ in job stream: eulw10#AP-CLEAN."
+ TASKTYPE UNIX
+ RECOVERY STOP
+
+END
+===============================================================
+
+
+# cleaning policy for PRISMA: +1M (zip) +3M (Delete)
+# cleaning policy for JBoss: +90 (del) +30 (zip)
+
+
+
+
+# restarting an application
+1. first ask the owner to clear the /tmp
+2. find the script location of Jboss main folder in /etc/init
+3. then stop app with "sudo /etc/init.d/STMjboss7_10080_ip (start/stop)"
+4. clean the /tmp folder of the app
+
+ 
