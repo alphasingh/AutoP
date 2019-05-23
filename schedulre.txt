@@ -6,6 +6,14 @@ EXCEPT RUNCYCLE SIMPLE1
 AT 1700
 CARRYFORWARD
 :
+#TGFILEIEDB     scriptname      "/mjob2452/PRIS/pr-ieplmcomp.testget iedbflageux018 eux018"
+#               streamlogon     batchpr
+#CMPPRODUCTS    scriptname      "/mjob2452/PRIS/pr-ieplmcomp.cmpproducts"
+#               streamlogon     batchpr
+#               follows         TGFILEIEDB
+#STOPIEDB       scriptname      "/mjob2452/PRIS/pr-ieplmcomp.stopflag"
+#               streamlogon     batchpr
+#               at 0500
 
 EUP2452#IEDBRFRSHRLVIEW
  SCRIPTNAME "/mjob2452/PRIS/pr-ieplmcomp.iedbrfrshrlview"
